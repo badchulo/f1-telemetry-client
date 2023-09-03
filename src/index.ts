@@ -172,8 +172,9 @@ class F1TelemetryClient extends EventEmitter {
   /**
    *
    * @param {Buffer} message
+   * @param {dgram.RemoteInfo} rinfo
    */
-176   handleMessage(message: Buffer, rinfo: dgram.RemoteInfo) {
+176   handleMessage(message, rinfo) {
 177     if (this.forwardAddresses) {
 178       // bridge message
 179       this.bridgeMessage(message);
