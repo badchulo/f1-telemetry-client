@@ -173,25 +173,19 @@ class F1TelemetryClient extends EventEmitter {
    *
    * @param {Buffer} message
    */
-  handleMessage(message: Buffer) {
-    if (this.forwardAddresses) {
-      // bridge message
-      this.bridgeMessage(message);
+    handleMessage(message, rinfo) {
+        if (this.forwardAddresses) {
+            // bridge message
+            this.bridgeMessage(message);
+        }
+        const parsedMessage = F1TelemetryClient.parseBufferMessage(message, this.bigintEnabled);
+        if (!parsedMessage || !parsedMessage.packetData) {
+            return;
+        }
+        // emit parsed message
+        this.emit(parsedMessage.packetID, parsedMessage.packetData.data, rinfo);
+        this.emit('raw', parsedMessage);
     }
-
-    const parsedMessage = F1TelemetryClient.parseBufferMessage(
-      message,
-      this.bigintEnabled
-    );
-
-    if (!parsedMessage || !parsedMessage.packetData) {
-      return;
-    }
-
-    // emit parsed message
-    this.emit(parsedMessage.packetID, parsedMessage.packetData.data);
-    this.emit('raw', parsedMessage);
-  }
 
   /**
    *
@@ -235,7 +229,7 @@ class F1TelemetryClient extends EventEmitter {
       this.socket.setBroadcast(true);
     });
 
-    this.socket.on('message', m => this.handleMessage(m));
+    this.socket.on('message', (m, rinfo) => this.handleMessage(m, rinfo));
     this.socket.bind({
       port: this.port,
       exclusive: false,
