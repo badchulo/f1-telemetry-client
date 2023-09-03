@@ -174,19 +174,19 @@ class F1TelemetryClient extends EventEmitter {
    * @param {Buffer} message
    * @param {dgram.RemoteInfo} rinfo
    */
-176   handleMessage(message, rinfo) {
-177     if (this.forwardAddresses) {
-178       // bridge message
-179       this.bridgeMessage(message);
-180     }
-181     const parsedMessage = F1TelemetryClient.parseBufferMessage(message, this.bigintEnabled);
-182     if (!parsedMessage || !parsedMessage.packetData) {
-183       return;
-184     }
-185     // emit parsed message
-186     this.emit(parsedMessage.packetID, parsedMessage.packetData.data, rinfo);
-187     this.emit('raw', parsedMessage);
-188   }
+  handleMessage(message: Buffer, rinfo: dgram.RemoteInfo) {
+    if (this.forwardAddresses) {
+      // bridge message
+      this.bridgeMessage(message);
+    }
+    const parsedMessage = F1TelemetryClient.parseBufferMessage(message, this.bigintEnabled);
+    if (!parsedMessage || !parsedMessage.packetData) {
+      return;
+    }
+    // emit parsed message
+    this.emit(parsedMessage.packetID, parsedMessage.packetData.data, rinfo);
+    this.emit('raw', parsedMessage);
+  }
 
   /**
    *
